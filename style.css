@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&display=swap');
+@import "tailwindcss";
+
+* {
+    font-family: 'Cascadia Mono', sans-serif;
+}
+
+body {
+    background: var(--color-background);
+}
+
+@theme {
+    --color-background: #dacbb6;
+    --color-container: #eaC686;
+    --color-primary: #5e7381;
+}
