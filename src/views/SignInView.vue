@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 
+import { firebaseConfig } from '@/firebaseConfig';
 import router from '@/router';
 import { RiGoogleFill } from '@remixicon/vue';
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { initializeApp } from 'firebase/app';
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { ErrorMessage, Field, Form } from 'vee-validate';
 import { ref } from 'vue';
 import { object, string } from 'yup';
@@ -10,16 +12,12 @@ import { object, string } from 'yup';
 const loading = ref(false);
 
 const schema = object({ email: string().required().email(), password: string().required().min(8) })
-const auth = getAuth();
-
-console.log(auth.currentUser)
 
 const onSubmit = async (values: any) => {
     loading.value = true;
 
     const valueData = JSON.parse(JSON.stringify(values));
-
-    await createUserWithEmailAndPassword(auth, valueData['email'], valueData['password']);
+    await signInWithEmailAndPassword(getAuth(), valueData['email'], valueData['password']);
 
     router.replace('/');
 
@@ -45,7 +43,7 @@ const onSubmit = async (values: any) => {
             <div v-if="loading">Loading</div>
             <div v-else>
                 Sign
-                Up</div>
+                In</div>
         </button>
         <div class="w-full flex flex-row items-center gap-2">
             <div class="bg-gray-400 h-0.5 w-full"></div>
@@ -58,8 +56,8 @@ const onSubmit = async (values: any) => {
             </div>
         </div>
         <div class="flex flex-row w-full justify-center items-center gap-2">
-            <div class="text-md">Already have an account?</div>
-            <RouterLink to="/sign-in" class="text-md text-primary underline">Sign In</RouterLink>
+            <div class="text-md">Don't have an account?</div>
+            <RouterLink to="/sign-up" class="text-md text-primary underline">Sign Up</RouterLink>
         </div>
     </Form>
 </template>
