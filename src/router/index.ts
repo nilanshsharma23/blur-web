@@ -1,5 +1,7 @@
+import AddBlurtView from "@/views/AddBlurtView.vue";
 import HomeView from "@/views/HomeView.vue";
-import ProfileSetup from "@/views/ProfileSetup.vue";
+import ProfileSetupView from "@/views/ProfileSetupView.vue";
+import ProfileView from "@/views/ProfileView.vue";
 import SignInView from "@/views/SignInView.vue";
 import SignUpView from "@/views/SignUpView.vue";
 import { createRouter, createWebHistory } from "vue-router";
@@ -12,9 +14,11 @@ const router = createRouter({
     { path: "/sign-in", component: SignInView, name: "Sign In | Blur" },
     {
       path: "/profile-setup",
-      component: ProfileSetup,
+      component: ProfileSetupView,
       name: "Profile Setup | Blur",
     },
+    { path: "/add-blurt", component: AddBlurtView, name: "Add Blurt | Blur" },
+    { path: "/profile", component: ProfileView, name: "Profile | Blur" },
   ],
 });
 
