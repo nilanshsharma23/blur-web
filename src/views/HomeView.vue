@@ -28,8 +28,9 @@ const route = useRoute()
 <template>
     <ParentContainer>
         <div
-            class="h-full flex flex-col items-center justify-start lg:pl-64 lg:pr-64 md:pl-32 md:pr-32 sm:pl-16 sm:pr-16 pl-8 pr-8 pt-4 gap-4">
-            <div class="w-full text-4xl font-bold lg:hidden">blur</div>
+            class="flex flex-col items-center justify-start xl:pl-128 xl:pr-128 lg:pl-64 lg:pr-64 md:pl-32 md:pr-32 sm:pl-16 sm:pr-16 pl-8 pr-8 pt-4 gap-4">
+            <div class="w-full text-4xl font-bold ">blur</div>
+
             <BlurtTemplate />
             <BlurtTemplate />
             <BlurtTemplate />

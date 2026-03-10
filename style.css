@@ -13,4 +13,5 @@ body {
     --color-background: #dacbb6;
     --color-container: #eaC686;
     --color-primary: #5e7381;
+    --color-translucent: rgba(0, 0, 0, 0.5);
 }
