@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-import { RiAddBoxFill, RiAddBoxLine, RiHome4Fill, RiHome4Line, RiUser3Fill, RiUser3Line } from '@remixicon/vue';
+import { RiAddBoxFill, RiAddBoxLine, RiHome4Fill, RiHome4Line, RiSettingsFill, RiSettingsLine, RiUser3Fill, RiUser3Line } from '@remixicon/vue';
 import NavigationItem from './NavigationItem.vue';
 import { useRoute } from 'vue-router';
 
@@ -30,6 +30,13 @@ const route = useRoute()
                 <RiUser3Line v-else />
                 <div class="text-md">
                     Profile
+                </div>
+            </NavigationItem>
+            <NavigationItem path="/settings">
+                <RiSettingsFill v-if="route.path == '/profile'" />
+                <RiSettingsLine v-else />
+                <div class="text-md">
+                    Settings
                 </div>
             </NavigationItem>
         </div>

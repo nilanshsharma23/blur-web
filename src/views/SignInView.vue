@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 
+import WaveSpinner from '@/components/WaveSpinner.vue';
 import { firebaseConfig } from '@/firebaseConfig';
 import router from '@/router';
 import { RiGoogleFill } from '@remixicon/vue';
@@ -40,7 +41,9 @@ const onSubmit = async (values: any) => {
         </div>
 
         <button class="w-full h-8 p-2 bg-primary flex items-center justify-center cursor-pointer border">
-            <div v-if="loading">Loading</div>
+            <div v-if="loading">
+                <WaveSpinner />
+            </div>
             <div v-else>
                 Sign
                 In</div>
