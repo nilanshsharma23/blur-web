@@ -3,20 +3,20 @@ import BlurtTemplate from "@/components/BlurtTemplate.vue";
 import ParentContainer from "@/components/ParentContainer.vue";
 import WaveSpinner from "@/components/WaveSpinner.vue";
 import { getCircles } from "@/functions/getCircles";
-import { getProfile } from "@/functions/getProfile";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc, getFirestore } from "firebase/firestore";
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 
 const auth = getAuth();
 const circlesLoading = ref(false);
 const circles = ref();
 
 onAuthStateChanged(auth, async (user) => {
-  circlesLoading.value = true;
-  circles.value = await getCircles(user?.uid!);
+  if (user) {
+    circlesLoading.value = true;
+    circles.value = await getCircles(user?.uid!);
 
-  circlesLoading.value = false;
+    circlesLoading.value = false;
+  }
 });
 </script>
 
@@ -41,11 +41,20 @@ onAuthStateChanged(auth, async (user) => {
       <div v-if="circlesLoading" class="hidden lg:block">
         <WaveSpinner />
       </div>
-      <select v-else name="circle" id="" class="text-2xl hidden lg:block">
+      <select name="circle" id="" class="text-2xl hidden lg:block">
         <option v-for="circle in circles" :value="circle['code']">
           {{ circle["name"] }}
         </option>
       </select>
+      <BlurtTemplate
+        >Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laborum cum
+        impedit quia beatae, sint cupiditate perspiciatis voluptatum provident
+        magni esse reiciendis sequi facilis quaerat omnis adipisci dignissimos
+        amet ipsam exercitationem. Lorem ipsum dolor sit amet consectetur
+        adipisicing elit. Tenetur eveniet hic aspernatur a quisquam dolore
+        deleniti. Amet molestias ducimus animi nobis harum, temporibus delectus
+        non, veritatis ea facilis illum eos.</BlurtTemplate
+      >
       <BlurtTemplate
         >Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laborum cum
         impedit quia beatae, sint cupiditate perspiciatis voluptatum provident

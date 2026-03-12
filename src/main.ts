@@ -5,6 +5,7 @@ import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "./firebaseConfig";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { getCircles } from "./functions/getCircles";
 
 const app = createApp(App);
 app.use(router);
@@ -12,18 +13,18 @@ app.use(router);
 app.mount("#app");
 
 initializeApp(firebaseConfig);
-const auth = getAuth()
-const db = getFirestore()
+const auth = getAuth();
+const db = getFirestore();
 
 onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-        router.replace('/sign-up');
-    }
-
+  if (!user) {
+    router.replace("/sign-up");
+  } else {
     const docRef = doc(db, "profiles", user?.uid!);
     const docSnap = await getDoc(docRef);
 
     if (!docSnap.exists()) {
-        router.replace('/profile-setup');
+      router.replace("/profile-setup");
     }
-})
+  }
+});
