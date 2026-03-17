@@ -2,6 +2,8 @@
 import {
   RiAddBoxFill,
   RiAddBoxLine,
+  RiCircleFill,
+  RiCircleLine,
   RiHome4Fill,
   RiHome4Line,
   RiSettingsFill,
@@ -30,6 +32,11 @@ const route = useRoute();
         <RiAddBoxFill v-if="route.path == '/add-blurt'" />
         <RiAddBoxLine v-else />
         <div class="text-md">Blurt</div>
+      </NavigationItem>
+      <NavigationItem path="/my-circles">
+        <RiCircleFill v-if="route.path == '/my-circles'" />
+        <RiCircleLine v-else />
+        <div class="text-md">My Circles</div>
       </NavigationItem>
       <NavigationItem path="/profile">
         <RiUser3Fill v-if="route.path == '/profile'" />

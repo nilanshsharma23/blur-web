@@ -1,22 +1,20 @@
-import { doc, getDoc, getFirestore } from "firebase/firestore"
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { getProfile } from "./getProfile";
 
 export const getCircles = async (uid: string) => {
-    const db = getFirestore()
+  const db = getFirestore();
 
-    let output = [];
+  let output = [];
 
-    console.log(uid)
+  const circleCodes = (await getProfile(uid))!["circles"];
 
-    const circleCodes = (await getProfile(uid))!['circles'];
+  for (let i = 0; i < circleCodes.length; i++) {
+    const circleCode = circleCodes[i];
 
-    for (let i = 0; i < circleCodes.length; i++) {
-        const circleCode = circleCodes[i];
-        
-        const circleData = (await getDoc(doc(db, "circles", circleCode))).data();
+    const circleData = (await getDoc(doc(db, "circles", circleCode))).data();
 
-        output.push({"code": circleCode, "name": circleData!['name']});
-    }
+    output.push({ code: circleCode, name: circleData!["name"] });
+  }
 
-    return output;
-}
+  return output;
+};

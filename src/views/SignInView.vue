@@ -2,12 +2,30 @@
 import WaveSpinner from "@/components/WaveSpinner.vue";
 import router from "@/router";
 import { RiGoogleFill } from "@remixicon/vue";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
+import { GoogleAuthProvider } from "firebase/auth/web-extension";
 import { ErrorMessage, Field, Form } from "vee-validate";
 import { ref } from "vue";
 import { object, string } from "yup";
 
 const loading = ref(false);
+
+const provider = new GoogleAuthProvider();
+
+const auth = getAuth();
+
+const signInWithGoogle = async () => {
+  loading.value = true;
+  console.log("here");
+
+  await signInWithPopup(auth, provider);
+
+  loading.value = false;
+};
 
 const schema = object({
   email: string().required().email().label("E-mail"),
@@ -17,11 +35,7 @@ const schema = object({
 const onSubmit = async (values: any) => {
   loading.value = true;
 
-  await signInWithEmailAndPassword(
-    getAuth(),
-    values["email"],
-    values["password"],
-  );
+  await signInWithEmailAndPassword(auth, values["email"], values["password"]);
 
   router.replace("/");
 
@@ -71,6 +85,7 @@ const onSubmit = async (values: any) => {
     <div class="flex flex-row items-center justify-center w-full">
       <div
         class="flex justify-center items-center p-2 bg-primary border cursor-pointer"
+        v-on:click="signInWithGoogle"
       >
         <RiGoogleFill color="white" />
       </div>

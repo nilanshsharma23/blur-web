@@ -1,5 +1,6 @@
 import AddBlurtView from "@/views/AddBlurtView.vue";
 import HomeView from "@/views/HomeView.vue";
+import MyCirclesView from "@/views/MyCirclesView.vue";
 import ProfileSetupView from "@/views/ProfileSetupView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import SettingsView from "@/views/SettingsView.vue";
@@ -20,7 +21,12 @@ const router = createRouter({
     },
     { path: "/add-blurt", component: AddBlurtView, name: "Add Blurt | Blur" },
     { path: "/profile", component: ProfileView, name: "Profile | Blur" },
-    {path: '/settings', component: SettingsView, name: "Settings | Blur"}
+    { path: "/settings", component: SettingsView, name: "Settings | Blur" },
+    {
+      path: "/my-circles",
+      component: MyCirclesView,
+      name: "My Circles | Blur",
+    },
   ],
 });
 

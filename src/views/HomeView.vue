@@ -31,7 +31,7 @@ onAuthStateChanged(auth, async (user) => {
           <WaveSpinner />
         </div>
 
-        <select name="circle" id="" class="text-2xl">
+        <select v-else name="circle" id="" class="text-2xl">
           <option v-for="circle in circles" :value="circle['code']">
             {{ circle["name"] }}
           </option>

@@ -2,34 +2,63 @@
 import ParentContainer from "@/components/ParentContainer.vue";
 import WaveSpinner from "@/components/WaveSpinner.vue";
 import { getCircles } from "@/functions/getCircles";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, type User } from "firebase/auth";
+import {
+  collection,
+  getDoc,
+  getDocs,
+  getFirestore,
+  limit,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import { ErrorMessage, Field, Form } from "vee-validate";
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import { object, string } from "yup";
 
 const circlesLoading = ref(false);
 const loading = ref(false);
-
 const anonymous = ref(false);
-
 const circles = ref();
+
+const db = getFirestore();
+
+let currentUser: User;
 
 const schema = object({
   content: string().required().label("Content"),
-  circle: string().required(),
+  circle: string().required().label("Circle"),
 });
 
 onAuthStateChanged(getAuth(), async (user) => {
   circlesLoading.value = true;
 
   circles.value = await getCircles(user?.uid!);
+
+  if (user) {
+    currentUser = user;
+  }
   circlesLoading.value = false;
 });
 
 const onSubmit = async (values: any) => {
   loading.value = true;
 
-  console.log(values);
+  console.log(currentUser);
+
+  const q = await getDocs(
+    query(
+      collection(db, values["circle"]),
+      where("user_id", "==", currentUser.uid!),
+      orderBy("created_at"),
+      limit(1),
+    ),
+  );
+
+  q.forEach((docs) => {
+    console.log(docs.data());
+  });
 
   loading.value = false;
 };
@@ -52,7 +81,7 @@ const onSubmit = async (values: any) => {
         </Field>
         <ErrorMessage name="content" class="text-red-500" />
       </div>
-      <div class="flex flex-col w-full">
+      <div class="flex flex-col w-full items-center">
         <div v-if="circlesLoading">
           <WaveSpinner />
         </div>
@@ -71,12 +100,7 @@ const onSubmit = async (values: any) => {
       <span>Note: You can only blurt every 1 hour.</span>
 
       <label class="flex flex-row w-full items-center justify-center gap-2">
-        <input
-          type="checkbox"
-          :v-bind="anonymous"
-          class="bg-container"
-          id="anonymous"
-        />
+        <input type="checkbox" :v-bind="anonymous" class="bg-container" />
         Anonymous
       </label>
       <button
