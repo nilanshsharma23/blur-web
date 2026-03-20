@@ -1,7 +1,13 @@
 <script lang="ts" setup>
+import WaveSpinner from "@/components/WaveSpinner.vue";
 import router from "@/router";
 import { RiGoogleFill } from "@remixicon/vue";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import { ErrorMessage, Field, Form } from "vee-validate";
 import { ref } from "vue";
 import { object, string } from "yup";
@@ -12,13 +18,24 @@ const schema = object({
   email: string().required().email().label("E-mail"),
   password: string().required().min(8).label("Password"),
 });
-const auth = getAuth();
 
-console.log(auth.currentUser);
+const signInWithGoogle = async () => {
+  loading.value = true;
+
+  const provider = new GoogleAuthProvider();
+  const auth = getAuth();
+
+  await signInWithPopup(auth, provider);
+
+  router.replace("/");
+
+  loading.value = false;
+};
 
 const onSubmit = async (values: any) => {
   loading.value = true;
 
+  const auth = getAuth();
   await createUserWithEmailAndPassword(
     auth,
     values["email"],
@@ -60,7 +77,7 @@ const onSubmit = async (values: any) => {
     <button
       class="w-full h-8 p-2 bg-primary flex items-center justify-center cursor-pointer border"
     >
-      <div v-if="loading">Loading</div>
+      <WaveSpinner v-if="loading" />
       <div v-else>Sign Up</div>
     </button>
     <div class="w-full flex flex-row items-center gap-2">
@@ -71,6 +88,7 @@ const onSubmit = async (values: any) => {
     <div class="flex flex-row items-center justify-center w-full">
       <div
         class="flex justify-center items-center p-2 bg-primary border cursor-pointer"
+        @click="signInWithGoogle"
       >
         <RiGoogleFill color="white" />
       </div>

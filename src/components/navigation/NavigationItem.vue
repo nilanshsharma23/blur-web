@@ -1,17 +1,19 @@
 <script lang="ts" setup>
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute } from "vue-router";
 
 const props = defineProps({
-    path: String
-})
+  path: String,
+});
 
-const route = useRoute()
-
+const route = useRoute();
 </script>
 
 <template>
-    <RouterLink :to="props.path!" class="lg:w-full flex flex-col lg:flex-row items-center lg:gap-2 p-2 cursor-pointer"
-        :class="{ 'font-bold': route.path == props.path! }">
-        <slot></slot>
-    </RouterLink>
+  <RouterLink
+    :to="props.path!"
+    class="lg:w-full text-center flex flex-col lg:flex-row items-center lg:gap-2 p-2 cursor-pointer"
+    :class="{ 'font-bold': route.path == props.path! }"
+  >
+    <slot></slot>
+  </RouterLink>
 </template>

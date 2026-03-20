@@ -51,7 +51,7 @@ const onSubmit = async (values: any) => {
     query(
       collection(db, values["circle"]),
       where("user_id", "==", currentUser.uid!),
-      orderBy("created_at"),
+      orderBy("created_at", "desc"),
       limit(1),
     ),
   );

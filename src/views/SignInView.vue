@@ -4,25 +4,25 @@ import router from "@/router";
 import { RiGoogleFill } from "@remixicon/vue";
 import {
   getAuth,
+  GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
-import { GoogleAuthProvider } from "firebase/auth/web-extension";
 import { ErrorMessage, Field, Form } from "vee-validate";
 import { ref } from "vue";
 import { object, string } from "yup";
 
 const loading = ref(false);
 
-const provider = new GoogleAuthProvider();
-
-const auth = getAuth();
-
 const signInWithGoogle = async () => {
   loading.value = true;
-  console.log("here");
+
+  const provider = new GoogleAuthProvider();
+  const auth = getAuth();
 
   await signInWithPopup(auth, provider);
+
+  router.replace("/");
 
   loading.value = false;
 };
@@ -34,6 +34,7 @@ const schema = object({
 
 const onSubmit = async (values: any) => {
   loading.value = true;
+  const auth = getAuth();
 
   await signInWithEmailAndPassword(auth, values["email"], values["password"]);
 
@@ -85,7 +86,7 @@ const onSubmit = async (values: any) => {
     <div class="flex flex-row items-center justify-center w-full">
       <div
         class="flex justify-center items-center p-2 bg-primary border cursor-pointer"
-        v-on:click="signInWithGoogle"
+        @click="signInWithGoogle"
       >
         <RiGoogleFill color="white" />
       </div>
