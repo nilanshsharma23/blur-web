@@ -2,15 +2,21 @@
 import ParentContainer from "@/components/ParentContainer.vue";
 import WaveSpinner from "@/components/WaveSpinner.vue";
 import { getCircles } from "@/functions/getCircles";
+import { getPosts } from "@/functions/getPosts";
+import router from "@/router";
 import { getAuth, onAuthStateChanged, type User } from "firebase/auth";
 import {
+  addDoc,
   collection,
+  doc,
   getDoc,
   getDocs,
   getFirestore,
   limit,
   orderBy,
   query,
+  setDoc,
+  Timestamp,
   where,
 } from "firebase/firestore";
 import { ErrorMessage, Field, Form } from "vee-validate";
@@ -21,10 +27,11 @@ const circlesLoading = ref(false);
 const loading = ref(false);
 const anonymous = ref(false);
 const circles = ref();
+const uid = ref("");
+
+const error = ref("");
 
 const db = getFirestore();
-
-let currentUser: User;
 
 const schema = object({
   content: string().required().label("Content"),
@@ -36,29 +43,40 @@ onAuthStateChanged(getAuth(), async (user) => {
 
   circles.value = await getCircles(user?.uid!);
 
-  if (user) {
-    currentUser = user;
-  }
+  uid.value = user?.uid!;
+
   circlesLoading.value = false;
 });
 
 const onSubmit = async (values: any) => {
   loading.value = true;
 
-  console.log(currentUser);
-
   const q = await getDocs(
     query(
       collection(db, values["circle"]),
-      where("user_id", "==", currentUser.uid!),
       orderBy("created_at", "desc"),
       limit(1),
     ),
   );
 
   q.forEach((docs) => {
-    console.log(docs.data());
+    var data = docs.data();
+
+    if (Date.now() - data["created_at"].toMillis() / 3600000 < 1) {
+      error.value = "A post has been made in this circle in the last hour.";
+      loading.value = false;
+      return;
+    }
   });
+
+  await addDoc(collection(db, values["circle"]), {
+    anonymous: anonymous.value,
+    content: values["content"],
+    created_at: Timestamp.fromDate(new Date()),
+    user_id: uid.value,
+  });
+
+  router.push("/");
 
   loading.value = false;
 };
@@ -111,6 +129,7 @@ const onSubmit = async (values: any) => {
         </div>
         <div v-else>Blurt</div>
       </button>
+      <span class="text-red-500">{{ error }}</span>
     </Form>
   </ParentContainer>
 </template>

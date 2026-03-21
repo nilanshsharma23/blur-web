@@ -3,21 +3,37 @@ import BlurtTemplate from "@/components/BlurtTemplate.vue";
 import ParentContainer from "@/components/ParentContainer.vue";
 import WaveSpinner from "@/components/WaveSpinner.vue";
 import { getCircles } from "@/functions/getCircles";
+import { getPosts } from "@/functions/getPosts";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { Timestamp } from "firebase/firestore";
 import { ref } from "vue";
 
 const auth = getAuth();
 const circlesLoading = ref(false);
 const circles = ref();
 
+const posts = ref();
+const currentCircle = ref("00000");
+const loading = ref(false);
+
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     circlesLoading.value = true;
     circles.value = await getCircles(user?.uid!);
-
     circlesLoading.value = false;
+
+    loading.value = true;
+    posts.value = await getPosts("00000");
+    console.log(posts.value);
+    loading.value = false;
   }
 });
+
+const onCircleSelected = async () => {
+  loading.value = true;
+  posts.value = await getPosts(currentCircle.value);
+  loading.value = false;
+};
 </script>
 
 <template>
@@ -31,7 +47,14 @@ onAuthStateChanged(auth, async (user) => {
           <WaveSpinner />
         </div>
 
-        <select v-else name="circle" id="" class="text-2xl">
+        <select
+          v-else
+          name="circle"
+          id=""
+          class="text-2xl"
+          v-model="currentCircle"
+          @change="onCircleSelected"
+        >
           <option v-for="circle in circles" :value="circle['code']">
             {{ circle["name"] }}
           </option>
@@ -41,28 +64,27 @@ onAuthStateChanged(auth, async (user) => {
       <div v-if="circlesLoading" class="hidden lg:block">
         <WaveSpinner />
       </div>
-      <select name="circle" id="" class="text-2xl hidden lg:block">
+      <select
+        name="circle"
+        id=""
+        class="text-2xl hidden lg:block"
+        v-model="currentCircle"
+        @change="onCircleSelected"
+      >
         <option v-for="circle in circles" :value="circle['code']">
           {{ circle["name"] }}
         </option>
       </select>
+
+      <WaveSpinner v-if="loading" />
       <BlurtTemplate
-        >Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laborum cum
-        impedit quia beatae, sint cupiditate perspiciatis voluptatum provident
-        magni esse reiciendis sequi facilis quaerat omnis adipisci dignissimos
-        amet ipsam exercitationem. Lorem ipsum dolor sit amet consectetur
-        adipisicing elit. Tenetur eveniet hic aspernatur a quisquam dolore
-        deleniti. Amet molestias ducimus animi nobis harum, temporibus delectus
-        non, veritatis ea facilis illum eos.</BlurtTemplate
-      >
-      <BlurtTemplate
-        >Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laborum cum
-        impedit quia beatae, sint cupiditate perspiciatis voluptatum provident
-        magni esse reiciendis sequi facilis quaerat omnis adipisci dignissimos
-        amet ipsam exercitationem. Lorem ipsum dolor sit amet consectetur
-        adipisicing elit. Tenetur eveniet hic aspernatur a quisquam dolore
-        deleniti. Amet molestias ducimus animi nobis harum, temporibus delectus
-        non, veritatis ea facilis illum eos.</BlurtTemplate
+        v-for="post in posts"
+        v-else
+        :name="post['profile']['name']"
+        :handle="post['profile']['handle']"
+        :time="Timestamp.now()"
+        :anonymous="post['anonymous']"
+        >{{ post["content"] }}</BlurtTemplate
       >
     </div>
   </ParentContainer>
