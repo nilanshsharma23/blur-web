@@ -24,7 +24,6 @@ onAuthStateChanged(auth, async (user) => {
 
     loading.value = true;
     posts.value = await getPosts("00000");
-    console.log(posts.value);
     loading.value = false;
   }
 });
@@ -78,8 +77,8 @@ const onCircleSelected = async () => {
 
       <WaveSpinner v-if="loading" />
       <BlurtTemplate
-        v-for="post in posts"
         v-else
+        v-for="post in posts"
         :name="post['profile']['name']"
         :handle="post['profile']['handle']"
         :time="Timestamp.now()"

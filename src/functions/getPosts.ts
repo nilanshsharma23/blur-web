@@ -26,7 +26,7 @@ export const getPosts = async (circleCode: string) => {
     query(collection(db, circleCode), orderBy("created_at", "desc"), limit(10)),
   );
 
-  q.forEach(async (document) => {
+  for (const document of q.docs) {
     const data = document.data();
     var profile: { user_id: string; name: string; handle: string } | undefined =
       profileCache.find((value) => value.user_id == data["user_id"]);
@@ -52,7 +52,7 @@ export const getPosts = async (circleCode: string) => {
       created_at: data["created_at"],
       profile: profile,
     });
-  });
+  }
 
   return output;
 };
