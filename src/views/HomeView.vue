@@ -81,7 +81,7 @@ const onCircleSelected = async () => {
         v-for="post in posts"
         :name="post['profile']['name']"
         :handle="post['profile']['handle']"
-        :time="Timestamp.now()"
+        :time="post['created_at']"
         :anonymous="post['anonymous']"
         >{{ post["content"] }}</BlurtTemplate
       >
