@@ -28,7 +28,6 @@ const loading = ref(false);
 const anonymous = ref(false);
 const circles = ref();
 const uid = ref("");
-
 const error = ref("");
 
 const db = getFirestore();
@@ -51,6 +50,8 @@ onAuthStateChanged(getAuth(), async (user) => {
 const onSubmit = async (values: any) => {
   loading.value = true;
 
+  let alreadyPosted = false;
+
   const q = await getDocs(
     query(
       collection(db, values["circle"]),
@@ -62,21 +63,23 @@ const onSubmit = async (values: any) => {
   q.forEach((docs) => {
     var data = docs.data();
 
-    if (Date.now() - data["created_at"].toMillis() / 3600000 < 1) {
-      error.value = "A post has been made in this circle in the last hour.";
-      loading.value = false;
-      return;
+    if ((Date.now() - data["created_at"].toMillis()) / 3600000 < 1) {
+      alreadyPosted = true;
     }
   });
 
-  await addDoc(collection(db, values["circle"]), {
-    anonymous: anonymous.value,
-    content: values["content"],
-    created_at: Timestamp.fromDate(new Date()),
-    user_id: uid.value,
-  });
+  if (alreadyPosted) {
+    error.value = "A post has already been made in the last hour.";
+  } else {
+    await addDoc(collection(db, values["circle"]), {
+      anonymous: anonymous.value,
+      content: values["content"],
+      created_at: Timestamp.fromDate(new Date()),
+      user_id: uid.value,
+    });
 
-  router.push("/");
+    router.push("/");
+  }
 
   loading.value = false;
 };
@@ -118,7 +121,7 @@ const onSubmit = async (values: any) => {
       <span>Note: You can only blurt every 1 hour.</span>
 
       <label class="flex flex-row w-full items-center justify-center gap-2">
-        <input type="checkbox" :v-bind="anonymous" class="bg-container" />
+        <input type="checkbox" v-model="anonymous" class="bg-container" />
         Anonymous
       </label>
       <button
